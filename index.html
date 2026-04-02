@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHANGE ME PLS</title>
+    <script src="https://unpkg.com/konva@10/konva.min.js"></script>
+    <link rel="stylesheet" href="../reset.css" />
+    <link rel="stylesheet" href="projectStyle.css" />
+    <script src="projectMain.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <div class="toolbar">
+        <button id="circle-button">draw me a circle</button>
+      </div>
+      <div>
+        <label for="color">when is your birthday?</label>
+        <!-- created to date chooser and set parameters of how far back the user can go (important for the maths in javascript) -->
+        <input
+          type="date"
+          id="date-color"
+          name="birthday"
+          min="1925-01-01"
+          max="2025-12-31"
+        />
+      </div>
+      <div class="toolBar"></div>
+      <div class="stageContainer" id="stage-container">
+        <div id="konva-stage"></div>
+      </div>
+    </main>
+  </body>
+</html>

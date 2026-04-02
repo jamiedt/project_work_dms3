@@ -1,0 +1,27 @@
+:root {
+  --c1: black;
+  --c2: white;
+  --c3: coral;
+  --c4: cornflowerblue;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c1: black;
+    --c2: white;
+    --c3: coral;
+    --c4: cornflowerblue;
+  }
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* created a black background too let the colours pop */
+.stageContainer {
+  flex: 1;
+  background-color: var(--c1);
+}
