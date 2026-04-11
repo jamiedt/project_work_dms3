@@ -7,7 +7,7 @@ const root = document.documentElement;
 // find stage container size
 let stageContainerWidth = stageContainer.offsetWidth;
 const stageContainerHeight = stageContainer.offsetHeight;
-// circle circlets off as black so that no circles show on the background at the circle (probably could add a *required code rather than drawing black circles but hey it works)
+// circle circles off as black so that no circles show on the background at the circle (probably could add a *required code rather than drawing black circles but hey it works)
 let circleColor = "blue";
 
 // create a stage the size of the container
@@ -90,7 +90,7 @@ function haveIntersection(c1, c2) {
 circleLayer.on("dragend", function (e) {
   const target = e.target;
 
-  // collect all circles that intersect with target (including chained ones)
+  // collect all circles that intersect with target
   let toMerge = [target];
 
   circleLayer.children.forEach(function (circle) {
@@ -101,7 +101,7 @@ circleLayer.on("dragend", function (e) {
     }
   });
 
-  // if only one circle, nothing to merge
+  // only merge if there are 2 or more circles
   if (toMerge.length > 1) {
     // calculate merged properties
     let totalRadius = 0;
@@ -117,67 +117,46 @@ circleLayer.on("dragend", function (e) {
     avgX /= toMerge.length;
     avgY /= toMerge.length;
 
-    // destroy all merged circles
-    toMerge.forEach((c) => c.destroy());
+    // animate old circles into blob
+    toMerge.forEach((c) => {
+      new Konva.Tween({
+        node: c,
+        duration: 0.5,
+        x: avgX,
+        y: avgY,
+        radius: 0,
+        easing: Konva.Easings.EaseIn,
+        onFinish: () => c.destroy(),
+      }).play();
+    });
 
-    // create merged circle
+    // create new merged circle
     const merged = new Konva.Circle({
       x: avgX,
       y: avgY,
-      radius: totalRadius,
+      radius: 0,
       fill: circleColor,
       draggable: true,
-      stroke: "white",
-      strokeWidth: 0,
     });
 
-    // cursor handlers
+    circleLayer.add(merged);
+
+    // grow merged blob
+    setTimeout(function () {
+      new Konva.Tween({
+        node: merged,
+        duration: 0.5,
+        radius: totalRadius,
+        easing: Konva.Easings.EaseOut,
+      }).play();
+    }, 500);
+
     merged.on("mouseenter", () => (stage.container().style.cursor = "pointer"));
     merged.on("mouseleave", () => (stage.container().style.cursor = "default"));
     merged.on("mousedown", () => (stage.container().style.cursor = "grab"));
     merged.on("mouseup", () => (stage.container().style.cursor = "pointer"));
-
-    circleLayer.add(merged);
   }
 });
 
 // listens for when the create new circle button is clicked and runs the above function
 circleButton.addEventListener("click", drawNewCircle);
-
-layer.on("dragend", function (e) {
-  const target = e.target;
-
-  layer.children.forEach(function (circle) {
-    if (circle === target) return;
-
-    if (haveIntersection(circle, target)) {
-      const newRadius = circle.radius() + target.radius();
-      const newX = (circle.x() + target.x()) / 2;
-      const newY = (circle.y() + target.y()) / 2;
-
-      circle.destroy();
-      target.destroy();
-
-      const merged = new Konva.Circle({
-        x: newX,
-        y: newY,
-        radius: newRadius,
-        fill: circleColor,
-        draggable: true,
-      });
-
-      merged.on(
-        "mouseenter",
-        () => (stage.container().style.cursor = "pointer"),
-      );
-      merged.on(
-        "mouseleave",
-        () => (stage.container().style.cursor = "default"),
-      );
-      merged.on("mousedown", () => (stage.container().style.cursor = "grab"));
-      merged.on("mouseup", () => (stage.container().style.cursor = "pointer"));
-
-      layer.add(merged);
-    }
-  });
-});
