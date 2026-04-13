@@ -84,7 +84,7 @@ function haveIntersection(c1, c2) {
   const dy = c1.y() - c2.y();
   const distance = Math.sqrt(dx * dx + dy * dy);
 
-  return distance < c1.radius() + c2.radius();
+  if (distance < c1.radius() + c2.radius()) return true;
 }
 
 circleLayer.on("dragend", function (e) {
@@ -98,11 +98,13 @@ circleLayer.on("dragend", function (e) {
 
     if (haveIntersection(circle, target)) {
       toMerge.push(circle);
+      circle.draggable(false);
     }
   });
 
   // only merge if there are 2 or more circles
   if (toMerge.length > 1) {
+    target.draggable(false);
     // calculate merged properties
     let totalRadius = 0;
     let avgX = 0;
@@ -136,10 +138,15 @@ circleLayer.on("dragend", function (e) {
       y: avgY,
       radius: 0,
       fill: circleColor,
-      draggable: true,
+      draggable: false,
     });
 
-    circleLayer.add(merged);
+    resetLayer.add(merged);
+
+    merged.on("mouseenter", () => (stage.container().style.cursor = "pointer"));
+    merged.on("mouseleave", () => (stage.container().style.cursor = "default"));
+    merged.on("mousedown", () => (stage.container().style.cursor = "grab"));
+    merged.on("mouseup", () => (stage.container().style.cursor = "pointer"));
 
     // grow merged blob
     setTimeout(function () {
@@ -151,10 +158,10 @@ circleLayer.on("dragend", function (e) {
       }).play();
     }, 500);
 
-    merged.on("mouseenter", () => (stage.container().style.cursor = "pointer"));
-    merged.on("mouseleave", () => (stage.container().style.cursor = "default"));
-    merged.on("mousedown", () => (stage.container().style.cursor = "grab"));
-    merged.on("mouseup", () => (stage.container().style.cursor = "pointer"));
+    setTimeout(function () {
+      merged.moveTo(circleLayer);
+      merged.draggable(true);
+    }, 1000);
   }
 });
 
