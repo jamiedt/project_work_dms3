@@ -25,3 +25,18 @@ main {
   flex: 1;
   background-color: var(--c1);
 }
+
+#red-circle-button {
+  background-color: red;
+  color: white;
+}
+
+#green-circle-button {
+  background-color: #00ff00;
+  color: black;
+}
+
+#blue-circle-button {
+  background-color: blue;
+  color: white;
+}

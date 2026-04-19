@@ -1,14 +1,16 @@
 // find our elements
 let stageContainer = document.getElementById("stage-container");
-const circleButton = document.getElementById("circle-button");
+const redCircleButton = document.getElementById("red-circle-button");
+const greenCircleButton = document.getElementById("green-circle-button");
+const blueCircleButton = document.getElementById("blue-circle-button");
+const showArtworkBtn = document.getElementById("show-artwork");
+const resetBtn = document.getElementById("reset");
 let dateColor = document.getElementById("date-color");
 const root = document.documentElement;
 
 // find stage container size
 let stageContainerWidth = stageContainer.offsetWidth;
 const stageContainerHeight = stageContainer.offsetHeight;
-// circle circles off as black so that no circles show on the background at the circle (probably could add a *required code rather than drawing black circles but hey it works)
-let circleColor = "blue";
 
 // create a stage the size of the container
 const stage = new Konva.Stage({
@@ -20,15 +22,32 @@ const stage = new Konva.Stage({
 // add a layer
 const circleLayer = new Konva.Layer();
 const resetLayer = new Konva.Layer();
+const canvasLayer = new Konva.Layer();
+
+canvasLayer.visible(false);
+
+canvasLayer.add(
+  new Konva.Rect({
+    x: 0,
+    y: 0,
+    width: stage.width(),
+    height: stage.height(),
+    fill: "white",
+    listening: false,
+  }),
+);
+
 stage.add(circleLayer);
 stage.add(resetLayer);
+stage.add(canvasLayer);
 
 // keep track of shape number
 let shapeNumber = 1;
 let previousShape;
+let mergeHistory = [];
 
 // add circle interaction that creates a circle of a random size at a random place on the stage
-function drawNewCircle() {
+function drawNewCircle(color) {
   // var group = new Konva.Group({
   //   x: stage.width() * Math.random(),
   //   y: stage.height() * Math.random(),
@@ -40,10 +59,10 @@ function drawNewCircle() {
     y: stage.height() * Math.random(),
     draggable: true,
     radius: 50 * Math.random(),
-    fill: circleColor,
+    fill: color,
     name: "shape", // + shapeNumber,
-    // stroke: "white",
-    // strokeWidth: 0,
+    stroke: "white",
+    strokeWidth: 0,
   });
 
   // add 1 to the shape number
@@ -66,15 +85,14 @@ circleLayer.on("dragmove", function (e) {
   target.moveTo(resetLayer);
   target.moveTo(circleLayer);
 
+  circleLayer.children.forEach((c) => c.strokeWidth(0));
+
   circleLayer.children.forEach(function (circle) {
     if (circle === target) return;
 
     if (haveIntersection(circle, target)) {
-      circle.fill("red");
-      target.fill("red");
-    } else {
-      circle.fill(circleColor);
-      target.fill(circleColor);
+      circle.strokeWidth(5);
+      target.strokeWidth(5);
     }
   });
 });
@@ -107,17 +125,33 @@ circleLayer.on("dragend", function (e) {
     target.draggable(false);
     // calculate merged properties
     let totalRadius = 0;
+
     let avgX = 0;
     let avgY = 0;
 
+    let avgR = 0;
+    let avgG = 0;
+    let avgB = 0;
+
     toMerge.forEach((c) => {
       totalRadius += c.radius();
+
       avgX += c.x();
       avgY += c.y();
+
+      const rgb = Konva.Util.getRGB(c.fill());
+      avgR += rgb.r;
+      avgG += rgb.g;
+      avgB += rgb.b;
     });
 
     avgX /= toMerge.length;
     avgY /= toMerge.length;
+
+    // for the rgb values the merged circles will show NaN error if the values are not integers
+    avgR = Math.round(avgR / toMerge.length);
+    avgG = Math.round(avgG / toMerge.length);
+    avgB = Math.round(avgB / toMerge.length);
 
     // animate old circles into blob
     toMerge.forEach((c) => {
@@ -137,9 +171,23 @@ circleLayer.on("dragend", function (e) {
       x: avgX,
       y: avgY,
       radius: 0,
-      fill: circleColor,
+      fill: `rgb(${avgR}, ${avgG}, ${avgB})`,
       draggable: false,
+      stroke: "white",
+      strokeWidth: 0,
     });
+
+    // create circles for artwork
+    const art = new Konva.Circle({
+      x: avgX,
+      y: avgY,
+      radius: totalRadius,
+      fill: `rgb(${avgR}, ${avgG}, ${avgB})`,
+      opacity: 0, // hidden initially
+    });
+
+    canvasLayer.add(art);
+    mergeHistory.push(art);
 
     resetLayer.add(merged);
 
@@ -165,5 +213,66 @@ circleLayer.on("dragend", function (e) {
   }
 });
 
+function playArtwork() {
+  if (mergeHistory.length === 0) {
+    alert("You must complete a circle merge first!");
+    return;
+  }
+
+  canvasLayer.visible(true);
+  circleLayer.visible(false);
+
+  mergeHistory.forEach((shape, index) => {
+    shape.scale({ x: 0, y: 0 });
+    shape.opacity(1);
+
+    setTimeout(() => {
+      new Konva.Tween({
+        node: shape,
+        duration: 0.5,
+        scaleX: 1,
+        scaleY: 1,
+        easing: Konva.Easings.BackEaseOut,
+      }).play();
+    }, index * 300); // delay in order
+  });
+}
+
+function resetEverything() {
+  // destroy all circles
+  circleLayer.destroyChildren();
+  resetLayer.destroyChildren();
+  canvasLayer.destroyChildren();
+
+  // clear merge history
+  mergeHistory = [];
+
+  // reset back to circle layer being visible and canvas layer invis
+  circleLayer.visible(true);
+  canvasLayer.visible(false);
+
+  canvasLayer.add(
+    new Konva.Rect({
+      x: 0,
+      y: 0,
+      width: stage.width(),
+      height: stage.height(),
+      fill: "white",
+      listening: false,
+    }),
+  );
+
+  stage.draw();
+}
+
 // listens for when the create new circle button is clicked and runs the above function
-circleButton.addEventListener("click", drawNewCircle);
+redCircleButton.addEventListener("click", drawNewCircle.bind(null, "#FF0000"));
+greenCircleButton.addEventListener(
+  "click",
+  drawNewCircle.bind(null, "#00FF00"),
+);
+blueCircleButton.addEventListener("click", drawNewCircle.bind(null, "#0000FF"));
+
+showArtworkBtn.addEventListener("click", playArtwork);
+
+resetBtn.addEventListener("click", resetEverything);

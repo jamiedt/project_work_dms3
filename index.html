@@ -12,20 +12,14 @@
   <body>
     <main>
       <div class="toolbar">
-        <button id="circle-button">draw me a circle</button>
-      </div>
-      <div>
-        <label for="color">when is your birthday?</label>
-        <!-- created to date chooser and set parameters of how far back the user can go (important for the maths in javascript) -->
-        <input
-          type="date"
-          id="date-color"
-          name="birthday"
-          min="1925-01-01"
-          max="2025-12-31"
-        />
+        <button id="red-circle-button">draw me a red circle</button>
+        <button id="green-circle-button">draw me a green circle</button>
+        <button id="blue-circle-button">draw me a blue circle</button>
+        <button id="show-artwork">show artwork</button>
+        <button id="reset">reset</button>
       </div>
       <div class="toolBar"></div>
+      <br />
       <div class="stageContainer" id="stage-container">
         <div id="konva-stage"></div>
       </div>
