@@ -123,6 +123,8 @@ circleLayer.on("dragend", function (e) {
   // only merge if there are 2 or more circles
   if (toMerge.length > 1) {
     target.draggable(false);
+    stage.container().style.cursor = "not-allowed";
+
     // calculate merged properties
     let totalRadius = 0;
 
@@ -134,6 +136,14 @@ circleLayer.on("dragend", function (e) {
     let avgB = 0;
 
     toMerge.forEach((c) => {
+      c.on(
+        "mouseenter",
+        () => (stage.container().style.cursor = "not-allowed"),
+      );
+      c.on("mouseleave", () => (stage.container().style.cursor = "default"));
+      c.on("mouseup", () => (stage.container().style.cursor = "not-allowed"));
+      c.on("mousedown", () => (stage.container().style.cursor = "not-allowed"));
+
       totalRadius += c.radius();
 
       avgX += c.x();
@@ -191,10 +201,19 @@ circleLayer.on("dragend", function (e) {
 
     resetLayer.add(merged);
 
-    merged.on("mouseenter", () => (stage.container().style.cursor = "pointer"));
+    merged.on(
+      "mouseenter",
+      () => (stage.container().style.cursor = "not-allowed"),
+    );
     merged.on("mouseleave", () => (stage.container().style.cursor = "default"));
-    merged.on("mousedown", () => (stage.container().style.cursor = "grab"));
-    merged.on("mouseup", () => (stage.container().style.cursor = "pointer"));
+    merged.on(
+      "mousedown",
+      () => (stage.container().style.cursor = "not-allowed"),
+    );
+    merged.on(
+      "mouseup",
+      () => (stage.container().style.cursor = "not-allowed"),
+    );
 
     // grow merged blob
     setTimeout(function () {
@@ -209,6 +228,22 @@ circleLayer.on("dragend", function (e) {
     setTimeout(function () {
       merged.moveTo(circleLayer);
       merged.draggable(true);
+      merged.on(
+        "mouseenter",
+        () => (stage.container().style.cursor = "pointer"),
+      );
+      merged.on(
+        "mouseleave",
+        () => (stage.container().style.cursor = "default"),
+      );
+      merged.on("mousedown", () => (stage.container().style.cursor = "grab"));
+      merged.on("mouseup", () => (stage.container().style.cursor = "pointer"));
+
+      const cursorPosition = stage.getPointerPosition();
+      const shapeUnderCursor = stage.getIntersection(cursorPosition);
+      if (shapeUnderCursor === merged) {
+        stage.container().style.cursor = "pointer";
+      }
     }, 1000);
   }
 });
