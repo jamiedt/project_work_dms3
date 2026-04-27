@@ -10,7 +10,14 @@ const root = document.documentElement;
 
 // find stage container size
 let stageContainerWidth = stageContainer.offsetWidth;
-const stageContainerHeight = stageContainer.offsetHeight;
+let stageContainerHeight = stageContainer.offsetHeight;
+
+onresize = () => {
+  stageContainerWidth = stageContainer.offsetWidth;
+  stageContainerHeight = stageContainer.offsetHeight;
+  stage.width(stageContainerWidth);
+  stage.height(stageContainerHeight);
+};
 
 // create a stage the size of the container
 const stage = new Konva.Stage({
