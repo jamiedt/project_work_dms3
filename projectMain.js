@@ -17,6 +17,8 @@ onresize = () => {
   stageContainerHeight = stageContainer.offsetHeight;
   stage.width(stageContainerWidth);
   stage.height(stageContainerHeight);
+  bg.width(stageContainerWidth);
+  bg.height(stageContainerHeight);
 };
 
 // create a stage the size of the container
@@ -33,17 +35,16 @@ const canvasLayer = new Konva.Layer();
 
 // make final artwork canvas invisible and add white background to differentiate between the two layers
 canvasLayer.visible(false);
-canvasLayer.add(
-  new Konva.Rect({
-    x: 0,
-    y: 0,
-    width: stage.width(),
-    height: stage.height(),
-    fill: "white",
-    // cant be interacted with
-    listening: false,
-  }),
-);
+const bg = new Konva.Rect({
+  x: 0,
+  y: 0,
+  width: stage.width(),
+  height: stage.height(),
+  fill: "white",
+  // cant be interacted with
+  listening: false,
+});
+canvasLayer.add(bg);
 
 // add the layers
 stage.add(circleLayer);
@@ -149,7 +150,6 @@ circleLayer.on("dragend", function (e) {
     let avgG = 0;
     let avgB = 0;
 
-    // maths that checks the values of every circle and adds/averages them
     toMerge.forEach((c) => {
       c.on(
         "mouseenter",
@@ -159,6 +159,7 @@ circleLayer.on("dragend", function (e) {
       c.on("mouseup", () => (stage.container().style.cursor = "not-allowed"));
       c.on("mousedown", () => (stage.container().style.cursor = "not-allowed"));
 
+      // maths that checks the values of every circle and adds/averages them
       totalRadius += c.radius();
 
       avgX += c.x();
@@ -311,16 +312,7 @@ function resetEverything() {
   canvasLayer.visible(false);
 
   // put white background back
-  canvasLayer.add(
-    new Konva.Rect({
-      x: 0,
-      y: 0,
-      width: stage.width(),
-      height: stage.height(),
-      fill: "white",
-      listening: false,
-    }),
-  );
+  canvasLayer.add(bg);
 
   stage.draw();
 }
