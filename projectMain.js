@@ -146,9 +146,9 @@ circleLayer.on("dragend", function (e) {
     let avgX = 0;
     let avgY = 0;
 
-    let avgR = 0;
-    let avgG = 0;
-    let avgB = 0;
+    let avgR = 1;
+    let avgG = 1;
+    let avgB = 1;
 
     toMerge.forEach((c) => {
       c.on(
@@ -166,18 +166,18 @@ circleLayer.on("dragend", function (e) {
       avgY += c.y();
 
       const rgb = Konva.Util.getRGB(c.fill());
-      avgR += rgb.r;
-      avgG += rgb.g;
-      avgB += rgb.b;
+      avgR *= 255 - rgb.r;
+      avgG *= 255 - rgb.g;
+      avgB *= 255 - rgb.b;
     });
 
     avgX /= toMerge.length;
     avgY /= toMerge.length;
 
     // for the rgb values the merged circles will show NaN error if the values are not integers
-    avgR = Math.round(avgR / toMerge.length);
-    avgG = Math.round(avgG / toMerge.length);
-    avgB = Math.round(avgB / toMerge.length);
+    avgR = 255 - Math.round(avgR / 255);
+    avgG = 255 - Math.round(avgG / 255);
+    avgB = 255 - Math.round(avgB / 255);
 
     // animate old circles merging down
     toMerge.forEach((c) => {
