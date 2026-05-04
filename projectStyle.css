@@ -14,16 +14,23 @@
   }
 }
 
+body {
+  overflow: hidden;
+}
+
 main {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 80px);
+  justify-content: end;
 }
 
 /* created a black background too let the colours pop */
 .stageContainer {
   flex: 1;
   background-color: var(--c1);
+  width: calc(100vw - 80px);
+  align-self: center;
 }
 
 #red-circle-button {
