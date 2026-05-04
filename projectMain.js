@@ -146,6 +146,17 @@ circleLayer.on("dragend", function (e) {
     let avgX = 0;
     let avgY = 0;
 
+    let H = 0;
+    let S = 0;
+    let L = 0;
+
+    let avgH = 0;
+    let avgS = 0;
+    let avgL = 0;
+
+    let sumX = 0;
+    let sumY = 0;
+
     let avgR = 0;
     let avgG = 0;
     let avgB = 0;
@@ -166,18 +177,82 @@ circleLayer.on("dragend", function (e) {
       avgY += c.y();
 
       const rgb = Konva.Util.getRGB(c.fill());
-      avgR += rgb.r;
-      avgG += rgb.g;
-      avgB += rgb.b;
+      console.log(rgb);
+      function rgbToHsl(r, g, b) {
+        // Normalize RGB values to [0, 1]
+        r /= 255;
+        g /= 255;
+        b /= 255;
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h,
+          s,
+          l = (max + min) / 2;
+
+        if (max === min) {
+          h = s = 0; // achromatic (gray)
+        } else {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+          switch (max) {
+            case r:
+              h = (g - b) / d + (g < b ? 6 : 0);
+              break;
+            case g:
+              h = (b - r) / d + 2;
+              break;
+            case b:
+              h = (r - g) / d + 4;
+              break;
+          }
+          h /= 6;
+        }
+
+        H = Math.round(h * 360);
+        S = Math.round(s * 100);
+        L = Math.round(l * 100);
+      }
+
+      rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+      const rad = (H * Math.PI) / 180;
+      sumX += Math.cos(rad);
+      sumY += Math.sin(rad);
+
+      avgS += S;
+      avgL += L;
+      console.log(avgS, avgL);
     });
 
     avgX /= toMerge.length;
     avgY /= toMerge.length;
 
     // for the rgb values the merged circles will show NaN error if the values are not integers
-    avgR = Math.round(avgR / toMerge.length);
-    avgG = Math.round(avgG / toMerge.length);
-    avgB = Math.round(avgB / toMerge.length);
+    avgH = Math.atan2(sumY, sumX) * (180 / Math.PI);
+
+    // fix negative angle
+    if (avgH < 0) avgH += 360;
+
+    avgS = Math.round(avgS / toMerge.length);
+    avgL = Math.round(avgL / toMerge.length);
+
+    function hslToRgb(h, s, l) {
+      // Normalize input to 0-1 range
+      s /= 100;
+      l /= 100;
+
+      const k = (n) => (n + h / 30) % 12;
+      const a = s * Math.min(l, 1 - l);
+      const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
+
+      avgR = Math.round(255 * f(0)); // Red
+      avgG = Math.round(255 * f(8)); // Green
+      avgB = Math.round(255 * f(4)); // Blue
+    }
+
+    hslToRgb(avgH, avgS, avgL);
 
     // animate old circles merging down
     toMerge.forEach((c) => {
