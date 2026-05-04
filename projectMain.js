@@ -175,9 +175,9 @@ circleLayer.on("dragend", function (e) {
     avgY /= toMerge.length;
 
     // for the rgb values the merged circles will show NaN error if the values are not integers
-    avgR = 255 - Math.round(avgR / (toMerge.length * 255));
-    avgG = 255 - Math.round(avgG / 255);
-    avgB = 255 - Math.round(avgB / 255);
+    avgR = 255 - Math.round(avgR / 255 ** (toMerge.length - 1));
+    avgG = 255 - Math.round(avgG / 255 ** (toMerge.length - 1));
+    avgB = 255 - Math.round(avgB / 255 ** (toMerge.length - 1));
     console.log([avgR, avgG, avgB]);
 
     // animate old circles merging down
