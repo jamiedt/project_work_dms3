@@ -1,28 +1,28 @@
 :root {
-  --c1: black;
-  --c2: white;
-  --c3: coral;
+  --c1: #a2a6dd;
+  --c2: rgb(213, 216, 255);
+  --c3: rgb(34, 34, 60);
   --c4: cornflowerblue;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --c1: black;
-    --c2: white;
-    --c3: coral;
-    --c4: cornflowerblue;
+    --c1: rgb(43, 45, 73);
+    --c2: rgb(34, 34, 60);
+    --c3: rgb(213, 216, 255);
+    --c4: rgb(29, 29, 30);
   }
 }
 
 body {
   overflow: hidden;
+  background-color: var(--c2);
 }
 
 main {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 80px);
-  justify-content: end;
 }
 
 /* created a black background too let the colours pop */

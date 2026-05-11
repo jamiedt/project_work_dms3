@@ -7,6 +7,8 @@ const showArtworkBtn = document.getElementById("show-artwork");
 const resetBtn = document.getElementById("reset");
 let dateColor = document.getElementById("date-color");
 const root = document.documentElement;
+const styles = getComputedStyle(root);
+const c3 = styles.getPropertyValue("--c3").trim();
 
 // find stage container size
 let stageContainerWidth = stageContainer.offsetWidth;
@@ -69,9 +71,26 @@ function drawNewCircle(color) {
     draggable: true,
     radius: 50 * Math.random(),
     fill: color,
+    shadowColor: color,
     name: "shape",
-    stroke: "white",
-    strokeWidth: 0,
+  });
+
+  base.on("mouseenter", function () {
+    // Animate glow on
+    base.to({
+      shadowBlur: 25,
+      shadowOpacity: 1,
+      duration: 0.2, // animation time
+    });
+  });
+
+  base.on("mouseleave", function () {
+    // Animate glow off
+    base.to({
+      shadowBlur: 0,
+      shadowOpacity: 0,
+      duration: 0.2,
+    });
   });
 
   // add the circle dragging cursors
@@ -95,16 +114,26 @@ circleLayer.on("dragmove", function (e) {
   target.moveTo(circleLayer);
 
   // gets rid of the stroke if not hovering another circle
-  circleLayer.children.forEach((c) => c.strokeWidth(0));
 
   // checks if any circles on the page are colliding with the target
   circleLayer.children.forEach(function (circle) {
     if (circle === target) return;
 
-    // applis stroke for touching circles
+    circle.to({
+      shadowBlur: 0,
+      shadowOpacity: 0,
+      shadowColor: circle.fill(),
+      duration: 0.2, // animation time
+    });
+
     if (haveIntersection(circle, target)) {
-      circle.strokeWidth(5);
-      target.strokeWidth(5);
+      // applis stroke for touching circles
+      circle.to({
+        shadowBlur: 50,
+        shadowOpacity: 1,
+        shadowColor: c3,
+        duration: 0.1, // animation time
+      });
     }
   });
 });
@@ -274,9 +303,8 @@ circleLayer.on("dragend", function (e) {
       radius: 0,
       // uses new calculated colour
       fill: `rgb(${avgR}, ${avgG}, ${avgB})`,
+      shadowColor: `rgb(${avgR}, ${avgG}, ${avgB})`,
       draggable: false,
-      stroke: "white",
-      strokeWidth: 0,
     });
 
     // create the merged circles for artwork layer
@@ -324,6 +352,25 @@ circleLayer.on("dragend", function (e) {
     setTimeout(function () {
       merged.moveTo(circleLayer);
       merged.draggable(true);
+
+      merged.on("mouseenter", function () {
+        // Animate glow on
+        merged.to({
+          shadowBlur: 25,
+          shadowOpacity: 1,
+          duration: 0.2, // animation time
+        });
+      });
+
+      merged.on("mouseleave", function () {
+        // Animate glow off
+        merged.to({
+          shadowBlur: 0,
+          shadowOpacity: 0,
+          duration: 0.2,
+        });
+      });
+
       merged.on(
         "mouseenter",
         () => (stage.container().style.cursor = "pointer"),
@@ -339,6 +386,12 @@ circleLayer.on("dragend", function (e) {
       const shapeUnderCursor = stage.getIntersection(cursorPosition);
       if (shapeUnderCursor === merged) {
         stage.container().style.cursor = "pointer";
+        merged.to({
+          shadowBlur: 25,
+          shadowOpacity: 1,
+          duration: 0.2, // animation time
+        });
+        s;
       }
     }, 1000);
   }
