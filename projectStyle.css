@@ -27,6 +27,7 @@ main {
 
 /* created a black background too let the colours pop */
 .stageContainer {
+  border-radius: 5%;
   flex: 1;
   background-color: var(--c1);
   width: calc(100vw - 80px);

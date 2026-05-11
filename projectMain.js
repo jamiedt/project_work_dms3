@@ -69,7 +69,7 @@ function drawNewCircle(color) {
     x: stage.width() * Math.random(),
     y: stage.height() * Math.random(),
     draggable: true,
-    radius: 50 * Math.random(),
+    radius: 50 * Math.random() + 20,
     fill: color,
     shadowColor: color,
     name: "shape",
@@ -109,6 +109,8 @@ circleLayer.on("dragmove", function (e) {
   // target is the dragged shape
   const target = e.target;
 
+  let activeIntersections = [];
+
   // moves target to the top of the layer for clarity
   target.moveTo(resetLayer);
   target.moveTo(circleLayer);
@@ -134,8 +136,29 @@ circleLayer.on("dragmove", function (e) {
         shadowColor: c3,
         duration: 0.1, // animation time
       });
+      target.to({
+        shadowBlur: 50,
+        shadowOpacity: 1,
+        shadowColor: c3,
+        duration: 0.1, // animation time
+      });
+      activeIntersections.push(circle);
+    } else {
+      let circleIndex = activeIntersections.indexOf(circle);
+      if (circleIndex > -1) {
+        activeIntersections.splice(circleIndex, 1); // Removes 1 item at 'index'
+      }
     }
   });
+
+  if (activeIntersections.length < 1) {
+    target.to({
+      shadowBlur: 25,
+      shadowOpacity: 1,
+      shadowColor: target.fill(),
+      duration: 0.1, // animation time
+    });
+  }
 });
 
 // pythag function to determine collision
@@ -200,13 +223,12 @@ circleLayer.on("dragend", function (e) {
       c.on("mousedown", () => (stage.container().style.cursor = "not-allowed"));
 
       // maths that checks the values of every circle and adds/averages them
-      totalRadius += c.radius();
+      totalRadius += Math.PI * c.radius() ** 2;
 
       avgX += c.x();
       avgY += c.y();
 
       const rgb = Konva.Util.getRGB(c.fill());
-      console.log(rgb);
       function rgbToHsl(r, g, b) {
         // Normalize RGB values to [0, 1]
         r /= 255;
@@ -311,7 +333,7 @@ circleLayer.on("dragend", function (e) {
     const art = new Konva.Circle({
       x: avgX,
       y: avgY,
-      radius: totalRadius,
+      radius: Math.sqrt(totalRadius / Math.PI),
       fill: `rgb(${avgR}, ${avgG}, ${avgB})`,
       // hidden initially for the animation later
       opacity: 0,
@@ -343,7 +365,7 @@ circleLayer.on("dragend", function (e) {
       new Konva.Tween({
         node: merged,
         duration: 0.5,
-        radius: totalRadius,
+        radius: Math.sqrt(totalRadius / Math.PI),
         easing: Konva.Easings.EaseOut,
       }).play();
     }, 500);
@@ -391,7 +413,6 @@ circleLayer.on("dragend", function (e) {
           shadowOpacity: 1,
           duration: 0.2, // animation time
         });
-        s;
       }
     }, 1000);
   }
