@@ -19,8 +19,10 @@ onresize = () => {
   stageContainerHeight = stageContainer.offsetHeight;
   stage.width(stageContainerWidth);
   stage.height(stageContainerHeight);
-  bg.width(stageContainerWidth);
-  bg.height(stageContainerHeight);
+  bg.width(window.innerWidth);
+  bg.height(window.innerHeight);
+  canvasStage.width(window.innerWidth);
+  canvasStage.height(window.innerHeight);
 };
 
 // create a stage the size of the container
@@ -30,18 +32,23 @@ const stage = new Konva.Stage({
   height: stageContainerHeight,
 });
 
+const canvasStage = new Konva.Stage({
+  container: "canvas-stage",
+  width: window.innerWidth,
+  height: window.innerHeight,
+});
+
 // add a layer
 const circleLayer = new Konva.Layer();
 const resetLayer = new Konva.Layer();
 const canvasLayer = new Konva.Layer();
 
 // make final artwork canvas invisible and add white background to differentiate between the two layers
-canvasLayer.visible(false);
 const bg = new Konva.Rect({
   x: 0,
   y: 0,
-  width: stage.width(),
-  height: stage.height(),
+  width: window.innerWidth,
+  height: window.innerHeight,
   fill: "white",
   // cant be interacted with
   listening: false,
@@ -51,7 +58,7 @@ canvasLayer.add(bg);
 // add the layers
 stage.add(circleLayer);
 stage.add(resetLayer);
-stage.add(canvasLayer);
+canvasStage.add(canvasLayer);
 
 // keep track of all the merges order for the artwork
 let mergeHistory = [];
@@ -103,6 +110,24 @@ function drawNewCircle(color) {
   // group.add(circle);
   circleLayer.add(base);
 }
+
+circleLayer.on("mousedown", function (e) {
+  const target = e.target;
+  target.to({
+    scaleX: 1.1,
+    scaleY: 1.1,
+    duration: 0.2,
+  });
+});
+
+circleLayer.on("mouseup", function (e) {
+  const target = e.target;
+  target.to({
+    scaleX: 1,
+    scaleY: 1,
+    duration: 0.2,
+  });
+});
 
 // calls this function whenever a circle is dragged
 circleLayer.on("dragmove", function (e) {
@@ -420,30 +445,32 @@ circleLayer.on("dragend", function (e) {
 
 // function to play the artwork
 function playArtwork() {
+  stageContainer.style.overflow = "visible";
+
   if (mergeHistory.length === 0) {
     alert("You must complete a circle merge first!");
     return;
   }
 
-  // changes to canvas layer
-  canvasLayer.visible(true);
-  circleLayer.visible(false);
+  canvasStage.container().classList.add("show");
 
   // for each shape in the merge history it plays an animation
-  mergeHistory.forEach((shape, index) => {
-    shape.scale({ x: 0, y: 0 });
-    shape.opacity(1);
+  setTimeout(() => {
+    mergeHistory.forEach((shape, index) => {
+      shape.scale({ x: 0, y: 0 });
+      shape.opacity(0.33);
 
-    setTimeout(() => {
-      new Konva.Tween({
-        node: shape,
-        duration: 0.5,
-        scaleX: 1,
-        scaleY: 1,
-        easing: Konva.Easings.BackEaseOut,
-      }).play();
-    }, index * 300);
-  });
+      setTimeout(() => {
+        new Konva.Tween({
+          node: shape,
+          duration: 0.5,
+          scaleX: 1,
+          scaleY: 1,
+          easing: Konva.Easings.BackEaseOut,
+        }).play();
+      }, index * 300);
+    });
+  }, 1000);
 }
 
 // destroy button function
@@ -457,8 +484,7 @@ function resetEverything() {
   mergeHistory = [];
 
   // reset back to circle layer being visible and canvas layer invis
-  circleLayer.visible(true);
-  canvasLayer.visible(false);
+  canvasStage.container().classList.remove("show");
 
   // put white background back
   canvasLayer.add(bg);

@@ -1,7 +1,7 @@
 :root {
-  --c1: #a2a6dd;
-  --c2: rgb(213, 216, 255);
-  --c3: rgb(34, 34, 60);
+  --c1: #dfe1fd;
+  --c2: rgb(205, 208, 244);
+  --c3: rgb(0, 6, 74);
   --c4: cornflowerblue;
 }
 
@@ -9,7 +9,7 @@
   :root {
     --c1: rgb(43, 45, 73);
     --c2: rgb(34, 34, 60);
-    --c3: rgb(213, 216, 255);
+    --c3: rgb(195, 199, 255);
     --c4: rgb(29, 29, 30);
   }
 }
@@ -27,13 +27,35 @@ main {
 
 /* created a black background too let the colours pop */
 .stageContainer {
-  border-radius: 5%;
+  border-radius: 20px;
   flex: 1;
   background-color: var(--c1);
   width: calc(100vw - 80px);
   align-self: center;
+  overflow: hidden;
 }
 
+/* #canvas-stage {
+  position: fixed;
+  top: 0;
+  right: 0;
+} */
+
+#canvas-stage {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transition:
+    transform 1.5s ease-in-out,
+    bottom 1.5s ease-in-out;
+  transform: translateX(-50%) translateY(100%);
+}
+
+/* visible state */
+#canvas-stage.show {
+  transform: translateX(-50%) translateY(0);
+  bottom: 0px;
+}
 #red-circle-button {
   background-color: red;
   color: white;
