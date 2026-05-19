@@ -41,21 +41,107 @@ main {
   right: 0;
 } */
 
-#canvas-stage {
+/* darkened background */
+#canvas-overlay {
   position: fixed;
-  bottom: 15px;
-  left: 50%;
-  transition:
-    transform 1.5s ease-in-out,
-    bottom 1.5s ease-in-out;
-  transform: translateX(-50%) translateY(100%);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  z-index: 5;
 }
 
-/* visible state */
-#canvas-stage.show {
-  transform: translateX(-50%) translateY(0);
-  bottom: 0px;
+/* overlay visible */
+#canvas-overlay.show {
+  opacity: 1;
 }
+
+/* whole floating canvas system */
+#canvas-wrapper {
+  position: fixed;
+
+  left: 50%;
+  bottom: 0;
+
+  width: 92vw;
+  height: 82vh;
+
+  /* hidden except tab */
+  transform: translateX(-50%) translateY(calc(100% - 45px));
+
+  transition: transform 0.9s ease-in-out;
+
+  z-index: 10;
+}
+
+/* fully visible */
+#canvas-wrapper.show {
+  transform: translateX(-50%) translateY(calc(0% - 45px));
+}
+
+/* the actual canvas */
+#canvas-stage {
+  width: 100%;
+  height: 100%;
+
+  background: white;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  box-shadow: 0px -10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* folder tab */
+#canvas-tab {
+  position: absolute;
+
+  top: -45px;
+  right: 40px;
+
+  width: 220px;
+  height: 45px;
+
+  border: none;
+
+  background: white;
+  color: black;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  clip-path: polygon(12% 0%, 100% 0%, 100% 100%, 0% 100%);
+
+  border-top-left-radius: 12px;
+
+  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* save button */
+#save-artwork {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  z-index: 20;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.4s ease;
+}
+
+/* visible save button */
+#save-artwork.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 #red-circle-button {
   background-color: red;
   color: white;

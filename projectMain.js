@@ -3,7 +3,10 @@ let stageContainer = document.getElementById("stage-container");
 const redCircleButton = document.getElementById("red-circle-button");
 const greenCircleButton = document.getElementById("green-circle-button");
 const blueCircleButton = document.getElementById("blue-circle-button");
-const showArtworkBtn = document.getElementById("show-artwork");
+const canvasTab = document.getElementById("canvas-tab");
+const saveArtworkBtn = document.getElementById("save-artwork");
+const canvasWrapper = document.getElementById("canvas-wrapper");
+const canvasOverlay = document.getElementById("canvas-overlay");
 const resetBtn = document.getElementById("reset");
 let dateColor = document.getElementById("date-color");
 const root = document.documentElement;
@@ -19,10 +22,10 @@ onresize = () => {
   stageContainerHeight = stageContainer.offsetHeight;
   stage.width(stageContainerWidth);
   stage.height(stageContainerHeight);
-  bg.width(window.innerWidth);
-  bg.height(window.innerHeight);
-  canvasStage.width(window.innerWidth);
-  canvasStage.height(window.innerHeight);
+  canvasStage.width(window.innerWidth * 0.92);
+  canvasStage.height(window.innerHeight * 0.82);
+  bg.width(window.innerWidth * 0.92);
+  bg.height(window.innerHeight * 0.82);
 };
 
 // create a stage the size of the container
@@ -34,8 +37,8 @@ const stage = new Konva.Stage({
 
 const canvasStage = new Konva.Stage({
   container: "canvas-stage",
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: window.innerWidth * 0.92,
+  height: window.innerHeight * 0.82,
 });
 
 // add a layer
@@ -192,7 +195,7 @@ function haveIntersection(c1, c2) {
   const dy = c1.y() - c2.y();
   const distance = Math.sqrt(dx * dx + dy * dy);
 
-  if (distance < c1.radius() + c2.radius()) return true;
+  if (distance < c1.radius() + 1.1 * c2.radius()) return true;
 }
 
 // fires everytime a circle is dropped
@@ -444,22 +447,45 @@ circleLayer.on("dragend", function (e) {
 });
 
 // function to play the artwork
-function playArtwork() {
-  stageContainer.style.overflow = "visible";
+let canvasOpen = false;
 
+function playArtwork() {
   if (mergeHistory.length === 0) {
     alert("You must complete a circle merge first!");
     return;
   }
 
-  canvasStage.container().classList.add("show");
+  // CLOSE CANVAS
+  if (canvasOpen) {
+    canvasWrapper.classList.remove("show");
+    canvasOverlay.classList.remove("show");
 
-  // for each shape in the merge history it plays an animation
+    canvasTab.textContent = "Show Artwork";
+
+    saveArtworkBtn.classList.remove("show");
+
+    canvasOpen = false;
+
+    return;
+  }
+
+  // OPEN CANVAS
+  canvasOpen = true;
+
+  canvasWrapper.classList.add("show");
+  canvasOverlay.classList.add("show");
+
+  canvasTab.textContent = "Close Canvas";
+
+  // reset animation
+  mergeHistory.forEach((shape) => {
+    shape.scale({ x: 0, y: 0 });
+    shape.opacity(0.33);
+  });
+
+  // stagger animation
   setTimeout(() => {
     mergeHistory.forEach((shape, index) => {
-      shape.scale({ x: 0, y: 0 });
-      shape.opacity(0.33);
-
       setTimeout(() => {
         new Konva.Tween({
           node: shape,
@@ -468,9 +494,16 @@ function playArtwork() {
           scaleY: 1,
           easing: Konva.Easings.BackEaseOut,
         }).play();
+
+        // show save button after final animation
+        if (index === mergeHistory.length - 1) {
+          setTimeout(() => {
+            saveArtworkBtn.classList.add("show");
+          }, 700);
+        }
       }, index * 300);
     });
-  }, 1000);
+  }, 600);
 }
 
 // destroy button function
@@ -500,6 +533,23 @@ greenCircleButton.addEventListener(
 );
 blueCircleButton.addEventListener("click", drawNewCircle.bind(null, "#0000FF"));
 
-showArtworkBtn.addEventListener("click", playArtwork);
+canvasTab.addEventListener("click", playArtwork);
 
 resetBtn.addEventListener("click", resetEverything);
+
+saveArtworkBtn.addEventListener("click", () => {
+  const dataURL = canvasStage.toDataURL({
+    pixelRatio: 3,
+  });
+
+  const link = document.createElement("a");
+
+  link.download = "my-artwork.png";
+  link.href = dataURL;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+});
