@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CHANGE ME PLS</title>
+    <title>Circle Merge</title>
     <script src="https://unpkg.com/konva@10/konva.min.js"></script>
     <link rel="stylesheet" href="../reset.css" />
     <link rel="stylesheet" href="projectStyle.css" />
@@ -11,21 +11,34 @@
   </head>
   <body>
     <main>
-      <!-- all the buttons -->
+      <!-- Toolbar — show-artwork button removed from here -->
       <div class="toolbar">
         <button id="red-circle-button">draw me a red circle</button>
         <button id="green-circle-button">draw me a green circle</button>
         <button id="blue-circle-button">draw me a blue circle</button>
-        <button id="show-artwork">show artwork</button>
         <button id="reset">reset</button>
       </div>
       <div class="toolBar"></div>
       <br />
-      <!-- playing area -->
+      <!-- Playing area -->
       <div class="stageContainer" id="stage-container">
         <div id="konva-stage"></div>
       </div>
     </main>
-    <div id="canvas-stage"></div>
+
+    <!-- Dark overlay (sits behind canvas wrapper, above main) -->
+    <div id="canvas-overlay"></div>
+
+    <!-- Canvas wrapper: holds the Konva canvas + the tab + save button -->
+    <div id="canvas-wrapper">
+      <!-- Trapezoid tab — always visible at the top-right of the wrapper -->
+      <button id="artwork-tab">▶ Show Artwork</button>
+
+      <!-- The actual Konva canvas -->
+      <div id="canvas-stage"></div>
+
+      <!-- Save PNG button, appears after animation -->
+      <button id="save-artwork-btn">⬇ Save as PNG</button>
+    </div>
   </body>
 </html>
