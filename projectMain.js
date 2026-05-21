@@ -192,7 +192,7 @@ function haveIntersection(c1, c2) {
   const dy = c1.y() - c2.y();
   const distance = Math.sqrt(dx * dx + dy * dy);
 
-  if (distance < c1.radius() + c2.radius()) return true;
+  if (distance < c1.radius() + 1.1 * c2.radius()) return true;
 }
 
 // fires everytime a circle is dropped
