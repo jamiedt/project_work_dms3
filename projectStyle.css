@@ -46,8 +46,8 @@ main {
   bottom: 15px;
   left: 50%;
   transition:
-    transform 1.5s ease-in-out,
-    bottom 1.5s ease-in-out;
+    transform 1s ease-in-out,
+    bottom 1s ease-in-out;
   transform: translateX(-50%) translateY(100%);
 }
 
