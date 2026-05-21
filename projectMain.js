@@ -5,6 +5,8 @@ const greenCircleButton = document.getElementById("green-circle-button");
 const blueCircleButton = document.getElementById("blue-circle-button");
 const showArtworkBtn = document.getElementById("show-artwork");
 const resetBtn = document.getElementById("reset");
+const exitArtworkBtn = document.getElementById("exit-artwork");
+const savePngBtn = document.getElementById("save-png");
 let dateColor = document.getElementById("date-color");
 const root = document.documentElement;
 const styles = getComputedStyle(root);
@@ -70,6 +72,8 @@ function drawNewCircle(color) {
   //   y: stage.height() * Math.random(),
   //   // draggable: true,
   // });
+  resetBtn.classList.add("show");
+
   const baseHues = {
     "hsl(0, 100%, 50%)": 0,
     "hsl(120, 100%, 50%)": 120,
@@ -410,6 +414,12 @@ function playArtwork() {
     return;
   }
 
+  document.body.style.pointerEvents = "none";
+  setTimeout(() => {
+    document.body.style.pointerEvents = "auto";
+    resetBtn.classList.remove("show");
+  }, 2100);
+
   showArtworkBtn.classList.add("hide");
   setTimeout(() => {
     canvasStage.container().classList.add("show");
@@ -447,25 +457,97 @@ function playArtwork() {
       }, index * 300);
     });
   }, 2100);
+
+  setTimeout(
+    () => {
+      exitArtworkBtn.classList.add("show");
+      savePngBtn.classList.add("show");
+    },
+    2100 + mergeHistory.length * 300,
+  );
 }
 
 // destroy button function
 function resetEverything() {
-  // destroy all circles
-  circleLayer.destroyChildren();
-  resetLayer.destroyChildren();
-  canvasLayer.destroyChildren();
+  document.body.style.pointerEvents = "none";
+  setTimeout(() => {
+    document.body.style.pointerEvents = "auto";
+  }, 1000);
+  resetBtn.classList.remove("show");
+  circleLayer.children.forEach((shape, index) => {
+    setTimeout(
+      () => {
+        new Konva.Tween({
+          node: shape,
+          duration: 0.5,
+          scaleX: 0,
+          scaleY: 0,
+          easing: Konva.Easings.EaseOut,
+        }).play();
+      },
+      (index * 500) / circleLayer.children.length,
+    );
+  });
 
-  // clear merge history
-  mergeHistory = [];
+  setTimeout(() => {
+    // destroy all circles
+    circleLayer.destroyChildren();
+    resetLayer.destroyChildren();
+    canvasLayer.destroyChildren();
 
-  // reset back to circle layer being visible and canvas layer invis
+    // clear merge history
+    mergeHistory = [];
+
+    // reset back to circle layer being visible and canvas layer invis
+    canvasStage.container().classList.remove("show");
+
+    // put white background back
+    canvasLayer.add(bg);
+
+    stage.draw();
+  }, 1000);
+}
+
+function exitArtwork() {
+  document.body.style.pointerEvents = "none";
+  setTimeout(() => {
+    document.body.style.pointerEvents = "auto";
+  }, 1500);
   canvasStage.container().classList.remove("show");
+  exitArtworkBtn.classList.remove("show");
+  savePngBtn.classList.remove("show");
+  showArtworkBtn.classList.remove("hide");
+  setTimeout(() => {
+    // destroy all circles
+    circleLayer.destroyChildren();
+    resetLayer.destroyChildren();
+    canvasLayer.destroyChildren();
 
-  // put white background back
-  canvasLayer.add(bg);
+    // clear merge history
+    mergeHistory = [];
 
-  stage.draw();
+    // reset back to circle layer being visible and canvas layer invis
+    canvasStage.container().classList.remove("show");
+
+    // put white background back
+    canvasLayer.add(bg);
+
+    stage.draw();
+  }, 1500);
+}
+
+function savePng() {
+  const dataURL = canvasStage.toDataURL({
+    mimeType: "image/png",
+    pixelRatio: 4,
+  });
+
+  const link = document.createElement("a");
+
+  link.href = dataURL;
+  link.download = "artwork.png";
+
+  link.click();
 }
 
 // listens for when each of the buttons are pressed and runs their respective functions
@@ -485,3 +567,7 @@ blueCircleButton.addEventListener(
 showArtworkBtn.addEventListener("click", playArtwork);
 
 resetBtn.addEventListener("click", resetEverything);
+
+exitArtworkBtn.addEventListener("click", exitArtwork);
+
+savePngBtn.addEventListener("click", savePng);

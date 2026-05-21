@@ -49,6 +49,7 @@ main {
     transform 1.5s ease-in-out,
     bottom 1.5s ease-in-out;
   transform: translateX(-50%) translateY(100%);
+  z-index: 1;
 }
 
 /* visible state */
@@ -85,11 +86,74 @@ main {
   padding-top: 15px;
   font-weight: bold;
   cursor: pointer;
-  transition: transform 1.5s ease-in-out;
+  transition:
+    transform 1.5s ease-in-out,
+    padding-bottom 0.5s ease-in-out;
 }
 
 #show-artwork.hide {
-  transform: translateX(-50%) translateY(50px);
+  transform: translateX(-50%) translateY(70px);
   pointer-events: none; /* Disables all mouse/touch events */
   cursor: default;
+}
+
+#show-artwork:hover {
+  padding-bottom: 20px;
+}
+
+#save-png {
+  border: none;
+  background-color: var(--c4);
+  border-radius: 25px;
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transform: scale(0);
+  transition: transform 0.5s ease-in-out;
+  z-index: 2;
+}
+
+#save-png.show {
+  transform: scale(1);
+}
+
+#save-png:hover {
+  transform: scale(1.1);
+}
+
+#exit-artwork {
+  border: none;
+  background-color: var(--c4);
+  border-radius: 25px;
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transform: scale(0);
+  transition: transform 0.5s ease-in-out;
+  z-index: 2;
+}
+
+#exit-artwork.show {
+  transform: scale(1);
+}
+
+#exit-artwork:hover {
+  transform: scale(1.1);
+}
+
+#end-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+#reset {
+  transform: scale(0);
+  transition: transform 0.5s ease-in-out;
+}
+
+#reset.show {
+  transform: scale(1);
 }
