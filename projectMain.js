@@ -101,7 +101,12 @@ function drawNewCircle(color) {
   });
 
   // add the circle dragging cursors
-  base.on("mouseenter", () => (stage.container().style.cursor = "pointer"));
+  base.on("mouseenter", () => (stage.container().style.cursor = "pointer";
+base.to({
+      shadowBlur: 25,
+      shadowOpacity: 1,
+      duration: 0.2, // animation time
+});));
   base.on("mouseleave", () => (stage.container().style.cursor = "default"));
   base.on("mousedown", () => (stage.container().style.cursor = "grab"));
   base.on("mouseup", () => (stage.container().style.cursor = "pointer"));
