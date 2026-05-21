@@ -1,16 +1,16 @@
 :root {
   --c1: #dfe1fd;
   --c2: rgb(205, 208, 244);
-  --c3: rgb(0, 6, 74);
-  --c4: cornflowerblue;
+  --c3: rgb(34, 34, 60);
+  --c4: rgb(34, 34, 60);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --c1: rgb(43, 45, 73);
     --c2: rgb(34, 34, 60);
-    --c3: rgb(195, 199, 255);
-    --c4: rgb(29, 29, 30);
+    --c3: #dfe1fd;
+    --c4: rgb(34, 34, 60);
   }
 }
 
@@ -46,8 +46,8 @@ main {
   bottom: 15px;
   left: 50%;
   transition:
-    transform 1s ease-in-out,
-    bottom 1s ease-in-out;
+    transform 1.5s ease-in-out,
+    bottom 1.5s ease-in-out;
   transform: translateX(-50%) translateY(100%);
 }
 
@@ -69,4 +69,27 @@ main {
 #blue-circle-button {
   background-color: blue;
   color: white;
+}
+
+#show-artwork {
+  position: fixed;
+  left: 50%;
+  bottom: 15px;
+  transform: translateX(-50%);
+  border: none;
+  background-color: white;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  color: var(--c4);
+  padding: 10px 20px;
+  padding-top: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 1.5s ease-in-out;
+}
+
+#show-artwork.hide {
+  transform: translateX(-50%) translateY(50px);
+  pointer-events: none; /* Disables all mouse/touch events */
+  cursor: default;
 }

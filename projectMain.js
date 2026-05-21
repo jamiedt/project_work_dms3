@@ -330,7 +330,7 @@ circleLayer.on("dragend", function (e) {
     mergeHistory.push(art);
 
     // adds merged circle
-    resetLayer.add(merged);
+    circleLayer.add(merged);
 
     merged.on(
       "mouseenter",
@@ -358,7 +358,6 @@ circleLayer.on("dragend", function (e) {
 
     // after both animations finsih the circle can be dragged again
     setTimeout(function () {
-      merged.moveTo(circleLayer);
       merged.draggable(true);
 
       merged.on("mouseenter", function () {
@@ -406,16 +405,32 @@ circleLayer.on("dragend", function (e) {
 
 // function to play the artwork
 function playArtwork() {
-  stageContainer.style.overflow = "visible";
-
   if (mergeHistory.length === 0) {
     alert("You must complete a circle merge first!");
     return;
   }
 
-  canvasStage.container().classList.add("show");
+  showArtworkBtn.classList.add("hide");
+  setTimeout(() => {
+    canvasStage.container().classList.add("show");
+  }, 500);
 
   // for each shape in the merge history it plays an animation
+  circleLayer.children.forEach((shape, index) => {
+    setTimeout(
+      () => {
+        new Konva.Tween({
+          node: shape,
+          duration: 0.5,
+          scaleX: 0,
+          scaleY: 0,
+          easing: Konva.Easings.EaseOut,
+        }).play();
+      },
+      (index * 500) / circleLayer.children.length,
+    );
+  });
+
   setTimeout(() => {
     mergeHistory.forEach((shape, index) => {
       shape.scale({ x: 0, y: 0 });
@@ -431,7 +446,7 @@ function playArtwork() {
         }).play();
       }, index * 300);
     });
-  }, 1000);
+  }, 2100);
 }
 
 // destroy button function
