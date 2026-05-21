@@ -152,6 +152,7 @@ circleLayer.on("dragmove", function (e) {
       shadowColor: circle.fill(),
       duration: 0.2, // animation time
     });
+    console.log(circle.fill());
 
     if (haveIntersection(circle, target)) {
       // applis stroke for touching circles
@@ -253,53 +254,19 @@ circleLayer.on("dragend", function (e) {
       avgX += c.x();
       avgY += c.y();
 
-      const rgb = Konva.Util.getRGB(c.fill());
-      function rgbToHsl(r, g, b) {
-        // Normalize RGB values to [0, 1]
-        r /= 255;
-        g /= 255;
-        b /= 255;
+      // used chatgpts help for this bit
+      const [h, s, l] = c
+        .fill()
+        .match(/[\d.]+/g)
+        .map(Number);
+      console.log(h, s, l);
 
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-        let h,
-          s,
-          l = (max + min) / 2;
-
-        if (max === min) {
-          h = s = 0; // achromatic (gray)
-        } else {
-          const d = max - min;
-          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-          switch (max) {
-            case r:
-              h = (g - b) / d + (g < b ? 6 : 0);
-              break;
-            case g:
-              h = (b - r) / d + 2;
-              break;
-            case b:
-              h = (r - g) / d + 4;
-              break;
-          }
-          h /= 6;
-        }
-
-        H = Math.round(h * 360);
-        S = Math.round(s * 100);
-        L = Math.round(l * 100);
-      }
-
-      rgbToHsl(rgb.r, rgb.g, rgb.b);
-
-      const rad = (H * Math.PI) / 180;
+      const rad = (h * Math.PI) / 180;
       sumX += Math.cos(rad);
       sumY += Math.sin(rad);
 
-      avgS += S;
-      avgL += L;
-      console.log(avgS, avgL);
+      avgS += s;
+      avgL += l;
     });
 
     avgX /= toMerge.length;
@@ -313,22 +280,6 @@ circleLayer.on("dragend", function (e) {
 
     avgS = Math.round(avgS / toMerge.length);
     avgL = Math.round(avgL / toMerge.length);
-
-    function hslToRgb(h, s, l) {
-      // Normalize input to 0-1 range
-      s /= 100;
-      l /= 100;
-
-      const k = (n) => (n + h / 30) % 12;
-      const a = s * Math.min(l, 1 - l);
-      const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
-
-      avgR = Math.round(255 * f(0)); // Red
-      avgG = Math.round(255 * f(8)); // Green
-      avgB = Math.round(255 * f(4)); // Blue
-    }
-
-    hslToRgb(avgH, avgS, avgL);
 
     // animate old circles merging down
     toMerge.forEach((c) => {
@@ -349,8 +300,8 @@ circleLayer.on("dragend", function (e) {
       y: avgY,
       radius: 0,
       // uses new calculated colour
-      fill: `rgb(${avgR}, ${avgG}, ${avgB})`,
-      shadowColor: `rgb(${avgR}, ${avgG}, ${avgB})`,
+      fill: `hsl(${avgH}, ${avgS}%, ${avgL}%)`,
+      shadowColor: `hsl(${avgH}, ${avgS}%, ${avgL}%)`,
       draggable: false,
     });
 
@@ -359,7 +310,7 @@ circleLayer.on("dragend", function (e) {
       x: avgX,
       y: avgY,
       radius: Math.sqrt(totalRadius / Math.PI),
-      fill: `rgb(${avgR}, ${avgG}, ${avgB})`,
+      fill: `hsl(${avgH}, ${avgS}%, ${avgL}%)`,
       // hidden initially for the animation later
       opacity: 0,
     });
@@ -493,12 +444,18 @@ function resetEverything() {
 }
 
 // listens for when each of the buttons are pressed and runs their respective functions
-redCircleButton.addEventListener("click", drawNewCircle.bind(null, "#FF0000"));
+redCircleButton.addEventListener(
+  "click",
+  drawNewCircle.bind(null, "hsl(0, 100%, 50%)"),
+);
 greenCircleButton.addEventListener(
   "click",
-  drawNewCircle.bind(null, "#00FF00"),
+  drawNewCircle.bind(null, "hsl(120, 100%, 50%)"),
 );
-blueCircleButton.addEventListener("click", drawNewCircle.bind(null, "#0000FF"));
+blueCircleButton.addEventListener(
+  "click",
+  drawNewCircle.bind(null, "hsl(240, 100%, 50%)"),
+);
 
 showArtworkBtn.addEventListener("click", playArtwork);
 
