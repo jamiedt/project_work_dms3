@@ -70,15 +70,25 @@ function drawNewCircle(color) {
   //   y: stage.height() * Math.random(),
   //   // draggable: true,
   // });
-
+  const baseHues = {
+    "hsl(0, 100%, 50%)": 0,
+    "hsl(120, 100%, 50%)": 120,
+    "hsl(240, 100%, 50%)": 240,
+  };
+  const h = Math.round(
+    (baseHues[color] + (Math.random() - 0.5) * 30 + 360) % 360,
+  );
+  const s = Math.round(100 - Math.random() * 25);
+  const l = Math.round(50 + (Math.random() - 0.5) * 25);
+  const randomisedColor = `hsl(${h}, ${s}%, ${l}%)`;
   // create random size circle in random position
   const base = new Konva.Circle({
     x: stage.width() * Math.random(),
     y: stage.height() * Math.random(),
     draggable: true,
     radius: 50 * Math.random() + 20,
-    fill: color,
-    shadowColor: color,
+    fill: randomisedColor,
+    shadowColor: randomisedColor,
     name: "shape",
   });
 
@@ -273,7 +283,7 @@ circleLayer.on("dragend", function (e) {
     avgY /= toMerge.length;
 
     // for the rgb values the merged circles will show NaN error if the values are not integers
-    avgH = Math.atan2(sumY, sumX) * (180 / Math.PI);
+    avgH = Math.round(Math.atan2(sumY, sumX) * (180 / Math.PI));
 
     // fix negative angle
     if (avgH < 0) avgH += 360;
@@ -293,7 +303,7 @@ circleLayer.on("dragend", function (e) {
         onFinish: () => c.destroy(),
       }).play();
     });
-
+    console.log(avgH, avgS, avgL);
     // create new merged circle
     const merged = new Konva.Circle({
       x: avgX,
