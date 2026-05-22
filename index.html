@@ -3,12 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CHANGE ME PLS</title>
+    <title>Mercular Surge</title>
     <script src="https://unpkg.com/konva@10/konva.min.js"></script>
     <link rel="stylesheet" href="reset.css" />
     <link rel="stylesheet" href="projectStyle.css" />
     <script src="projectMain.js" defer></script>
   </head>
+  <section class="overlay">
+    <div id="overlay-screen"></div>
+    <img id="overlay-image" src="" alt="Overlay Image" target="_blank"></img>
+    <div id="start-buttons">
+    <button id="tutorial">Tutorial</button>
+    <button id="start">Start</button>
+    </div>
+  </section>
   <body>
     <main>
       <!-- all the buttons -->
@@ -16,7 +24,7 @@
         <button class="circle-button" id="red-circle-button"></button>
         <button class="circle-button" id="green-circle-button"></button>
         <button class="circle-button" id="blue-circle-button"></button>
-        <button class="circle-button" id="random-circle-button"></button>
+        <button class="circle-button" id="random-circle-button">?</button>
         <button id="reset">Reset</button>
       </div>
       <div class="toolBar"></div>

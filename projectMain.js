@@ -8,7 +8,13 @@ const showArtworkBtn = document.getElementById("show-artwork");
 const resetBtn = document.getElementById("reset");
 const exitArtworkBtn = document.getElementById("exit-artwork");
 const savePngBtn = document.getElementById("save-png");
-let dateColor = document.getElementById("date-color");
+const overlayScreen = document.getElementById("overlay-screen");
+const overlayImage = document.getElementById("overlay-image");
+const tutorialBtn = document.getElementById("tutorial");
+const startBtn = document.getElementById("start");
+const startButtons = document.getElementById("start-buttons");
+
+// get css variable for stroke colour
 const root = document.documentElement;
 const styles = getComputedStyle(root);
 const c3 = styles.getPropertyValue("--c3").trim();
@@ -16,6 +22,15 @@ const c3 = styles.getPropertyValue("--c3").trim();
 // find stage container size
 let stageContainerWidth = stageContainer.offsetWidth;
 let stageContainerHeight = stageContainer.offsetHeight;
+
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+onload = () => {
+  if (isDarkMode) {
+    overlayImage.src = "img/namel.png";
+  } else {
+    overlayImage.src = "img/named.png";
+  }
+};
 
 onresize = () => {
   stageContainerWidth = stageContainer.offsetWidth;
@@ -74,18 +89,26 @@ function drawNewCircle(color) {
   //   // draggable: true,
   // });
   resetBtn.classList.add("show");
-  const baseHues = {
-    "hsl(0, 100%, 50%)": 0,
-    "hsl(120, 100%, 50%)": 120,
-    "hsl(240, 100%, 50%)": 240,
-  };
 
-  const h = Math.round(
-    (baseHues[color] + (Math.random() - 0.5) * 30 + 360) % 360,
-  );
-  const s = Math.round(100 - Math.random() * 25);
-  const l = Math.round(50 + (Math.random() - 0.5) * 25);
-  const randomisedColor = `hsl(${h}, ${s}%, ${l}%)`;
+  let randomisedColor;
+
+  if (color === "random") {
+    randomisedColor = `hsl(${Math.round(Math.random() * 360)}, ${75 + Math.round(Math.random() * 25)}%, ${10 + Math.round(Math.random() * 80)}%)`;
+    randomCircleButton.classList.add("hide");
+  } else {
+    const baseHues = {
+      "hsl(0, 100%, 50%)": 0,
+      "hsl(120, 100%, 50%)": 120,
+      "hsl(240, 100%, 50%)": 240,
+    };
+
+    const h = Math.round(
+      (baseHues[color] + (Math.random() - 0.5) * 30 + 360) % 360,
+    );
+    const s = Math.round(100 - Math.random() * 25);
+    const l = Math.round(50 + (Math.random() - 0.5) * 25);
+    randomisedColor = `hsl(${h}, ${s}%, ${l}%)`;
+  }
   // create random size circle in random position
   const base = new Konva.Circle({
     x: stage.width() * Math.random(),
@@ -465,7 +488,7 @@ function playArtwork() {
             easing: Konva.Easings.BackEaseOut,
           }).play();
         },
-        index * 600 * 0.96 ** index, // overlaps the animations a bit for better effect
+        index * 500 * 0.95 ** index, // overlaps the animations a bit for better effect
       );
     });
   }, 2100);
@@ -475,7 +498,7 @@ function playArtwork() {
       exitArtworkBtn.classList.add("show");
       savePngBtn.classList.add("show");
     },
-    2100 + mergeHistory.length * 300,
+    2100 + mergeHistory.length * 500 * 0.95 ** mergeHistory.length + 500, // waits for all the animations to finish before showing the buttons
   );
 }
 
@@ -486,6 +509,7 @@ function resetEverything() {
     document.body.style.pointerEvents = "auto";
   }, 1000);
   resetBtn.classList.remove("show");
+  randomCircleButton.classList.remove("hide");
   circleLayer.children.forEach((shape, index) => {
     setTimeout(
       () => {
@@ -544,6 +568,7 @@ function exitArtwork() {
 
   savePngBtn.classList.remove("show");
   exitArtworkBtn.classList.remove("show");
+  randomCircleButton.classList.remove("hide");
 
   setTimeout(() => {
     canvasStage.container().classList.remove("show");
@@ -582,6 +607,27 @@ function savePng() {
   link.click();
 }
 
+function startTutorial() {
+  overlayImage.classList.add("hide");
+  startBtn.classList.add("tutorial");
+  tutorialBtn.classList.add("hide");
+
+  setTimeout(() => {
+    overlayImage.style.width = "80vw";
+    overlayImage.src = "img/tut.png";
+    overlayImage.classList.remove("hide");
+  }, 500);
+}
+
+function startTool() {
+  startBtn.classList.remove("tutorial");
+  overlayImage.classList.add("hide");
+  startButtons.classList.add("hide");
+  setTimeout(() => {
+    overlayScreen.classList.add("hide");
+  }, 500);
+}
+
 // listens for when each of the buttons are pressed and runs their respective functions
 redCircleButton.addEventListener(
   "click",
@@ -597,7 +643,7 @@ blueCircleButton.addEventListener(
 );
 randomCircleButton.addEventListener(
   "click",
-  drawNewCircle.bind(null, `hsl(${Math.random() * 360}, 100%, 50%)`),
+  drawNewCircle.bind(null, "random"),
 );
 
 showArtworkBtn.addEventListener("click", playArtwork);
@@ -607,3 +653,7 @@ resetBtn.addEventListener("click", resetEverything);
 exitArtworkBtn.addEventListener("click", exitArtwork);
 
 savePngBtn.addEventListener("click", savePng);
+
+tutorialBtn.addEventListener("click", startTutorial);
+
+startBtn.addEventListener("click", startTool);

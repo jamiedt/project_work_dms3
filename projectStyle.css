@@ -22,7 +22,7 @@ body {
 main {
   display: flex;
   flex-direction: column;
-  padding-top: 60px;
+  padding-top: 80px;
   height: calc(100vh - 80px);
 }
 
@@ -61,7 +61,7 @@ main {
 
 #red-circle-button {
   position: fixed;
-  top: 20px;
+  top: 35px;
   left: 40px;
   width: 50px;
   height: 50px;
@@ -75,7 +75,7 @@ main {
 
 #green-circle-button {
   position: fixed;
-  top: 20px;
+  top: 35px;
   left: 105px;
   width: 50px;
   height: 50px;
@@ -89,7 +89,7 @@ main {
 
 #blue-circle-button {
   position: fixed;
-  top: 20px;
+  top: 35px;
   left: 170px;
   width: 50px;
   height: 50px;
@@ -103,7 +103,7 @@ main {
 
 #random-circle-button {
   position: fixed;
-  top: 20px;
+  top: 35px;
   left: 235px;
   width: 50px;
   height: 50px;
@@ -115,7 +115,14 @@ main {
   font-family: Helvetica, sans-serif;
   font-size: 35px;
   font-weight: bold;
-  transition: outline 0.3s ease-out;
+  transition:
+    outline 0.3s ease-out,
+    transform 0.5s ease-in-out;
+}
+
+#random-circle-button.hide {
+  transform: scale(0);
+  pointer-events: none;
 }
 
 #red-circle-button:hover,
@@ -205,7 +212,7 @@ main {
 
 #reset {
   position: fixed;
-  top: 25px;
+  top: 40px;
   right: 40px;
   transform: scale(0);
   border: none;
@@ -224,4 +231,101 @@ main {
 
 #reset.show {
   transform: scale(1);
+}
+
+#overlay-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--c2);
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 1000;
+}
+
+#overlay-screen.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#overlay-image {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 1001;
+  transition: transform 0.5s ease-in-out;
+}
+
+#overlay-image.hide {
+  transform: translate(-50%, -50%) scale(0);
+}
+
+#tutorial {
+  border: none;
+  background-color: var(--c3);
+  border-radius: 25px;
+  color: var(--c1);
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1002;
+  transition: transform 0.5s ease-in-out;
+}
+
+#tutorial:hover {
+  transform: scale(1.1);
+}
+
+#tutorial.hide {
+  transform: scale(0);
+  pointer-events: none;
+}
+
+#start {
+  border: none;
+  background-color: rgb(21, 145, 21);
+  border-radius: 25px;
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1002;
+  transition:
+    transform 0.5s ease-in-out,
+    top 0.5s ease-in-out,
+    left 0.5s ease-in-out;
+}
+
+#start:hover {
+  transform: scale(1.1);
+}
+
+#start.tutorial {
+  transform: translate(-55px, 150px);
+}
+
+#start-buttons {
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-end;
+  z-index: 1002;
+  transition: transform 0.5s ease-in-out;
+}
+
+#start-buttons.hide {
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
 }
