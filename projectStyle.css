@@ -312,6 +312,10 @@ main {
   transform: translate(-55px, 150px);
 }
 
+#start.tutorial:hover {
+  transform: translate(-55px, 150px) scale(1.1);
+}
+
 #start-buttons {
   position: fixed;
   top: 60%;
