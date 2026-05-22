@@ -613,7 +613,7 @@ function startTutorial() {
   tutorialBtn.classList.add("hide");
 
   setTimeout(() => {
-    overlayImage.style.width = "80vw";
+    overlayImage.style.width = "70vw";
     overlayImage.src = "img/tut.png";
     overlayImage.classList.remove("hide");
   }, 500);
@@ -626,6 +626,9 @@ function startTool() {
   setTimeout(() => {
     overlayScreen.classList.add("hide");
   }, 500);
+  setTimeout(() => {
+    overlayScreen.style.display = "none";
+  }, 1000);
 }
 
 // listens for when each of the buttons are pressed and runs their respective functions
