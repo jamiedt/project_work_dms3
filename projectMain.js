@@ -198,7 +198,6 @@ circleLayer.on("dragmove", function (e) {
       shadowColor: circle.fill(),
       duration: 0.2, // animation time
     });
-    console.log(circle.fill());
 
     if (haveIntersection(circle, target)) {
       // applis stroke for touching circles
@@ -305,7 +304,6 @@ circleLayer.on("dragend", function (e) {
         .fill()
         .match(/[\d.]+/g)
         .map(Number);
-      console.log(h, s, l);
 
       const rad = (h * Math.PI) / 180;
       sumX += Math.cos(rad);
@@ -339,7 +337,6 @@ circleLayer.on("dragend", function (e) {
         onFinish: () => c.destroy(),
       }).play();
     });
-    console.log(avgH, avgS, avgL);
     // create new merged circle
     const merged = new Konva.Circle({
       x: avgX,
