@@ -479,7 +479,7 @@ function playArtwork() {
         () => {
           new Konva.Tween({
             node: shape,
-            duration: 0.5,
+            duration: 0.75,
             scaleX: 1,
             scaleY: 1,
             easing: Konva.Easings.BackEaseOut,
@@ -625,6 +625,9 @@ function startTool() {
   }, 500);
   setTimeout(() => {
     overlayScreen.style.display = "none";
+    overlayImage.src = ""; // Clear the source to release the image data
+    overlayImage.remove(); // Remove from DOM
+    overlayImage = null;
   }, 1000);
 }
 
