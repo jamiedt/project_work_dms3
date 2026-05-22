@@ -22,6 +22,7 @@ body {
 main {
   display: flex;
   flex-direction: column;
+  padding-top: 40px;
   height: calc(100vh - 80px);
 }
 
@@ -57,19 +58,44 @@ main {
   transform: translateX(-50%) translateY(0);
   bottom: 0px;
 }
+
 #red-circle-button {
+  position: fixed;
+  top: 20px;
+  left: 40px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid transparent;
   background-color: red;
   color: white;
 }
 
 #green-circle-button {
+  position: fixed;
+  top: 20px;
+  left: 100px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid transparent;
   background-color: #00ff00;
   color: black;
 }
 
 #blue-circle-button {
+  position: fixed;
+  top: 20px;
+  left: 160px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid transparent;
   background-color: blue;
   color: white;
+}
+.circle-button:hover {
+  border: 3px solid rgb(255, 255, 255);
 }
 
 #show-artwork {

@@ -94,6 +94,7 @@ function drawNewCircle(color) {
     fill: randomisedColor,
     shadowColor: randomisedColor,
     name: "shape",
+    scale: { x: 0, y: 0 },
   });
 
   base.on("mouseenter", function () {
@@ -123,6 +124,13 @@ function drawNewCircle(color) {
   // layer.add(group);
   // group.add(circle);
   circleLayer.add(base);
+  new Konva.Tween({
+    node: base,
+    duration: 0.5,
+    scaleX: 1,
+    scaleY: 1,
+    easing: Konva.Easings.EaseOut,
+  }).play();
 }
 
 circleLayer.on("mousedown", function (e) {
@@ -446,15 +454,18 @@ function playArtwork() {
       shape.scale({ x: 0, y: 0 });
       shape.opacity(0.33);
 
-      setTimeout(() => {
-        new Konva.Tween({
-          node: shape,
-          duration: 0.5,
-          scaleX: 1,
-          scaleY: 1,
-          easing: Konva.Easings.BackEaseOut,
-        }).play();
-      }, index * 300);
+      setTimeout(
+        () => {
+          new Konva.Tween({
+            node: shape,
+            duration: 0.5,
+            scaleX: 1,
+            scaleY: 1,
+            easing: Konva.Easings.BackEaseOut,
+          }).play();
+        },
+        index * 750 * 0.975 ** index, // overlaps the animations a bit for better effect
+      );
     });
   }, 2100);
 
@@ -513,27 +524,47 @@ function exitArtwork() {
   setTimeout(() => {
     document.body.style.pointerEvents = "auto";
   }, 1500);
-  canvasStage.container().classList.remove("show");
+
+  canvasLayer.children.forEach((shape, index) => {
+    if (shape === bg) return;
+    setTimeout(
+      () => {
+        new Konva.Tween({
+          node: shape,
+          duration: 0.5,
+          scaleX: 0,
+          scaleY: 0,
+          easing: Konva.Easings.EaseOut,
+        }).play();
+      },
+      (index * 500) / (canvasLayer.children.length - 1),
+    );
+  });
+
   exitArtworkBtn.classList.remove("show");
   savePngBtn.classList.remove("show");
-  showArtworkBtn.classList.remove("hide");
+
   setTimeout(() => {
-    // destroy all circles
-    circleLayer.destroyChildren();
-    resetLayer.destroyChildren();
-    canvasLayer.destroyChildren();
-
-    // clear merge history
-    mergeHistory = [];
-
-    // reset back to circle layer being visible and canvas layer invis
     canvasStage.container().classList.remove("show");
+    showArtworkBtn.classList.remove("hide");
+    setTimeout(() => {
+      // destroy all circles
+      circleLayer.destroyChildren();
+      resetLayer.destroyChildren();
+      canvasLayer.destroyChildren();
 
-    // put white background back
-    canvasLayer.add(bg);
+      // clear merge history
+      mergeHistory = [];
 
-    stage.draw();
-  }, 1500);
+      // reset back to circle layer being visible and canvas layer invis
+      canvasStage.container().classList.remove("show");
+
+      // put white background back
+      canvasLayer.add(bg);
+
+      stage.draw();
+    }, 1500);
+  }, 500);
 }
 
 function savePng() {
