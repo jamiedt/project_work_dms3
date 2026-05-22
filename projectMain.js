@@ -3,6 +3,7 @@ let stageContainer = document.getElementById("stage-container");
 const redCircleButton = document.getElementById("red-circle-button");
 const greenCircleButton = document.getElementById("green-circle-button");
 const blueCircleButton = document.getElementById("blue-circle-button");
+const randomCircleButton = document.getElementById("random-circle-button");
 const showArtworkBtn = document.getElementById("show-artwork");
 const resetBtn = document.getElementById("reset");
 const exitArtworkBtn = document.getElementById("exit-artwork");
@@ -73,12 +74,12 @@ function drawNewCircle(color) {
   //   // draggable: true,
   // });
   resetBtn.classList.add("show");
-
   const baseHues = {
     "hsl(0, 100%, 50%)": 0,
     "hsl(120, 100%, 50%)": 120,
     "hsl(240, 100%, 50%)": 240,
   };
+
   const h = Math.round(
     (baseHues[color] + (Math.random() - 0.5) * 30 + 360) % 360,
   );
@@ -464,7 +465,7 @@ function playArtwork() {
             easing: Konva.Easings.BackEaseOut,
           }).play();
         },
-        index * 750 * 0.975 ** index, // overlaps the animations a bit for better effect
+        index * 600 * 0.96 ** index, // overlaps the animations a bit for better effect
       );
     });
   }, 2100);
@@ -541,8 +542,8 @@ function exitArtwork() {
     );
   });
 
-  exitArtworkBtn.classList.remove("show");
   savePngBtn.classList.remove("show");
+  exitArtworkBtn.classList.remove("show");
 
   setTimeout(() => {
     canvasStage.container().classList.remove("show");
@@ -593,6 +594,10 @@ greenCircleButton.addEventListener(
 blueCircleButton.addEventListener(
   "click",
   drawNewCircle.bind(null, "hsl(240, 100%, 50%)"),
+);
+randomCircleButton.addEventListener(
+  "click",
+  drawNewCircle.bind(null, `hsl(${Math.random() * 360}, 100%, 50%)`),
 );
 
 showArtworkBtn.addEventListener("click", playArtwork);

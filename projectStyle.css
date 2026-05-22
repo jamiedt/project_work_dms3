@@ -22,7 +22,7 @@ body {
 main {
   display: flex;
   flex-direction: column;
-  padding-top: 40px;
+  padding-top: 60px;
   height: calc(100vh - 80px);
 }
 
@@ -66,42 +66,70 @@ main {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 3px solid transparent;
+  outline: 0px solid white;
+  border: none;
   background-color: red;
   color: white;
+  transition: outline 0.3s ease-out;
 }
 
 #green-circle-button {
   position: fixed;
   top: 20px;
-  left: 100px;
+  left: 105px;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 3px solid transparent;
+  outline: 0px solid white;
+  border: none;
   background-color: #00ff00;
   color: black;
+  transition: outline 0.3s ease-out;
 }
 
 #blue-circle-button {
   position: fixed;
   top: 20px;
-  left: 160px;
+  left: 170px;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 3px solid transparent;
+  outline: 0px solid white;
+  border: none;
   background-color: blue;
   color: white;
+  transition: outline 0.3s ease-out;
 }
-.circle-button:hover {
-  border: 3px solid rgb(255, 255, 255);
+
+#random-circle-button {
+  position: fixed;
+  top: 20px;
+  left: 235px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  outline: 0px solid white;
+  border: none;
+  background-color: black;
+  color: white;
+  font-family: Helvetica, sans-serif;
+  font-size: 35px;
+  font-weight: bold;
+  transition: outline 0.3s ease-out;
+}
+
+#red-circle-button:hover,
+#green-circle-button:hover,
+#blue-circle-button:hover,
+#random-circle-button:hover {
+  outline: 5px solid white;
+  cursor: pointer;
 }
 
 #show-artwork {
   position: fixed;
   left: 50%;
-  bottom: 15px;
+  bottom: 14px;
   transform: translateX(-50%);
   border: none;
   background-color: white;
@@ -144,7 +172,7 @@ main {
   transform: scale(1);
 }
 
-#save-png:hover {
+#save-png.show:hover {
   transform: scale(1.1);
 }
 
@@ -165,7 +193,7 @@ main {
   transform: scale(1);
 }
 
-#exit-artwork:hover {
+#exit-artwork.show:hover {
   transform: scale(1.1);
 }
 
@@ -176,8 +204,22 @@ main {
 }
 
 #reset {
+  position: fixed;
+  top: 25px;
+  right: 40px;
   transform: scale(0);
+  border: none;
+  background-color: var(--c3);
+  border-radius: 25px;
+  color: var(--c1);
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
   transition: transform 0.5s ease-in-out;
+}
+
+#reset.show:hover {
+  transform: scale(1.1);
 }
 
 #reset.show {
